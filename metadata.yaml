@@ -17,5 +17,5 @@ documentation: "https://github.com/matteo-zambon-gtm/GA4-Items-to-Facebook-Objec
 
 versions:
   # Latest Version
-  - sha: 7f2e490c07d8a7008c328cb7cdd2a5d8a2377cf8
+  - sha: bdf3a769c4ce74ff33dc0acf2799737d4801ccd0
     changeNotes: Initial release
