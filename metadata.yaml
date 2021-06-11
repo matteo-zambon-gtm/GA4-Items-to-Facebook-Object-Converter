@@ -1,0 +1,28 @@
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+homepage: "https://www.tagmanageritalia.com/"
+documentation: "https://www.tagmanageritalia.it/how-to-move-from-enhanced-ecommerce-tracking-to-google-analytics-4-ecommerce-tracking-with-google-tag-manager/"
+
+versions:
+  # Latest Version
+  - sha: 8337502cd0b0c39c635a0597e7d5af43412c643a
+    changeNotes: Fix from item_category_N to item_categoryN 
+  # Older versions
+  - sha: 95244a8fd3f1e9426f87930897cf01b4d3b83244
+    changeNotes: Add Currency on items
+  - sha: adb912bfd3e9d7fb2c72a90c418c16edebb5874b
+    changeNotes: Change name and description and documentation link
+  - sha: 2da6d63a6a4ae1129915fe59fa67af56274b87d7
+    changeNotes: Initial release.
