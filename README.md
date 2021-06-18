@@ -31,6 +31,9 @@ You can change:
 - Currency
 - Product Type
 
+![GA4 Items to Facebook Object Converter details](https://www.tagmanageritalia.it/GTM/guida/uploads/2021/06/GA4-Items-to-Facebook-Object-Converter-details.jpg)
+
+
 # Update your Facebook Custom Tag Template :
 ## Open your Facebook Tag
 
