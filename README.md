@@ -19,6 +19,7 @@ https://www.simoahava.com/analytics/facebook-conversions-api-gtm-server-side-tag
 ## Import the custom variable from the gallery
 
 Go to the GTM gallery variable and search "GA4 Items to Facebook Object Converter"
+![select GA4 Items to Facebook Object Converter from Template Gallery](https://www.tagmanageritalia.it/GTM/guida/uploads/2021/06/select-GA4-Items-to-Facebook-Object-Converter-from-Template-Gallery.png)
 
 
 ## The configuration: 
