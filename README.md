@@ -29,7 +29,7 @@ Here is the official guide by Google: https://support.google.com/analytics/answe
 
 You can get GIFOC from this link:
 
-https://tagmanager.google.com/gallery/#/owners/matteo-zambon-gtm/templates/GA4-Items-to-Facebook-Object- Converter
+https://tagmanager.google.com/gallery/#/owners/matteo-zambon-gtm/templates/GA4-Items-to-Facebook-Object-Converter
 
 I will soon write a longer post with all the details about GIFOC and its usage.
 
