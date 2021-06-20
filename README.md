@@ -47,7 +47,7 @@ https://www.simoahava.com/custom-templates/facebook-pixel/
 
 and you have GA4 items then you can use this variable.
 
-You can use this for settings GA4 
+You can use this for settings Facebook Conversion API through GTM Server-side and GA4 
 
 https://www.simoahava.com/analytics/facebook-conversions-api-gtm-server-side-tagging/
 
