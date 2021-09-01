@@ -17,5 +17,8 @@ documentation: "https://github.com/matteo-zambon-gtm/GA4-Items-to-Facebook-Objec
 
 versions:
   # Latest Version
+  - sha: da3f0422a92efd02943cf66dfad5f89a6910e200
+    changeNotes: Change display name from Product Type to Content Type
+  # Older versions
   - sha: bdf3a769c4ce74ff33dc0acf2799737d4801ccd0
     changeNotes: Initial release
