@@ -36,7 +36,7 @@ ___TEMPLATE_PARAMETERS___
   {
     "type": "SELECT",
     "name": "productType",
-    "displayName": "Product Type",
+    "displayName": "Content Type",
     "macrosInSelect": true,
     "selectItems": [
       {
