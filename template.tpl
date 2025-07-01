@@ -13,8 +13,8 @@ ___INFO___
   "id": "cvt_temp_public_id",
   "version": 1,
   "securityGroups": [],
-  "displayName": "GA4 Items to Facebook Object Converter",
-  "description": "This variable template easily converts GA4 Items structure to the Facebook object structure.\nIt is useful to track the ecommerce events of the FB Pixel and FB Conversion API through the GA4 Items.",
+  "displayName": "GA4 Items to Meta/Facebook Object Converter",
+  "description": "This variable template easily converts GA4 Items structure to the Meta/Facebook object structure.\nIt is useful to track the ecommerce events of the FB Pixel and FB Conversion API through the GA4 Items.",
   "containerContexts": [
     "WEB"
   ]
@@ -154,6 +154,40 @@ ___TEMPLATE_PARAMETERS___
         ]
       }
     ]
+  },
+  {
+    "type": "LABEL",
+    "name": "label1",
+    "displayName": "Add custom parameters. These parameters will override the other default parameters."
+  },
+  {
+    "type": "TEXT",
+    "name": "itemIdFormat",
+    "displayName": "Item ID Format",
+    "simpleValueType": true,
+    "alwaysInSummary": true,
+    "defaultValue": "[[item_id]]",
+    "help": "Define the format for the Item ID. Use {{Variable Name}} for GTM variables directly (they will be resolved by GTM) and [[item_property]] for GA4 item properties (e.g., product_{{Language}}_[[item_id]]_[[item_variant]])."
+  },
+  {
+    "type": "SIMPLE_TABLE",
+    "name": "custom_parameters_table",
+    "displayName": "Add Key and Values to the Meta object",
+    "simpleTableColumns": [
+      {
+        "defaultValue": "",
+        "displayName": "Key",
+        "name": "custom_parameters_key",
+        "type": "TEXT"
+      },
+      {
+        "defaultValue": "",
+        "displayName": "Value",
+        "name": "custom_parameters_value",
+        "type": "TEXT"
+      }
+    ],
+    "help": "Define the format for the custom parameters. Use {{Variable Name}} for GTM variables directly (they will be resolved by GTM) and [[item_property]] for GA4 item properties (e.g., product_{{Language}}_[[item_id]]_[[item_variant]]).\nThese parameters will override the other default parameters."
   }
 ]
 
@@ -168,6 +202,8 @@ const ga4Events = ['view_item_list', 'select_item', 'view_item', 'remove_from_ca
 var ecommerce_items = [];
 var ecommerce = [];
 var event = '';
+const customParametersTable = data.custom_parameters_table;
+const itemIdFormat = data.itemIdFormat;
 
 if(data.use_datalayer === false){  
   ecommerce_items = data.alternative_items;
@@ -185,6 +221,33 @@ else{
   event = dl('event');  
 }
 
+// Funzione helper per risolvere solo i placeholder delle proprietà dell'item (es. [[item_id]])
+const resolveItemId = (formatString, item) => {
+  let resolvedId = formatString;
+  let startIndex = -1;
+  let endIndex = -1;
+
+  // Ciclo per trovare e sostituire tutte le occorrenze di [[proprietà]]
+  while ((startIndex = resolvedId.indexOf('[[')) !== -1) {
+    endIndex = resolvedId.indexOf(']]', startIndex + 2);
+
+    if (endIndex === -1) {
+      // Formato non valido, es. "[[prop" senza "]]"
+      break;
+    }
+
+    const propName = resolvedId.substring(startIndex + 2, endIndex);
+    const itemPropertyValue = item.hasOwnProperty(propName) ? item[propName] : '';
+    const replacementValue = itemPropertyValue !== undefined && itemPropertyValue !== null ? itemPropertyValue.toString() : '';
+
+    // Sostituisci il placeholder con il valore risolto
+    resolvedId = resolvedId.substring(0, startIndex) +
+                 replacementValue +
+                 resolvedId.substring(endIndex + 2);
+  }
+
+  return resolvedId;
+};
 
 if(ga4Events.indexOf(event) >= 0){
   let fbObj = {};    
@@ -192,9 +255,12 @@ if(ga4Events.indexOf(event) >= 0){
   let prods = ecommerce_items;
 
   let idList = prods.map(function(prod) {
-    if(prod.hasOwnProperty('item_id')){
+      return resolveItemId(itemIdFormat, prod);
+/*    
+     if(prod.hasOwnProperty('item_id')){
       return prod.item_id.toString();
     }
+*/      
   });
 
   if(event === 'purchase'){
@@ -231,7 +297,8 @@ if(ga4Events.indexOf(event) >= 0){
     }
     if(prod.hasOwnProperty('item_id') && prod.hasOwnProperty('price'))
       return {
-        id: prod.item_id.toString(),
+//        id: prod.item_id.toString(),
+        id: resolveItemId(itemIdFormat, prod),
         item_price: makeNumber(prod.price),
         quantity: makeInteger(prod.quantity)
       };
@@ -247,8 +314,23 @@ if(ga4Events.indexOf(event) >= 0){
   }
   else{
     fbObj.currency = data.defaultCurrency;
-  }        
+  }
 
+    // 2. Aggiungi i parametri personalizzati dalla tabella a gadsObj
+    // Controllo "simile ad array" senza isArray
+    if (typeof customParametersTable === 'object' && customParametersTable !== null && typeof customParametersTable.length === 'number') {
+        // Tentiamo di prendere il primo item per i placeholder, se l'array prods non è vuoto
+        const firstProd = (typeof prods === 'object' && prods !== null && typeof prods.length === 'number' && prods.length > 0) ? prods[0] : {};
+
+        customParametersTable.forEach(function(param) {
+            const key = param.custom_parameters_key;
+            const valueFormat = param.custom_parameters_value;
+            if (key && valueFormat) {
+                fbObj[key] = resolveItemId(valueFormat, firstProd);
+            }
+        });
+    }   
+  
   return fbObj;
 }
 else{
