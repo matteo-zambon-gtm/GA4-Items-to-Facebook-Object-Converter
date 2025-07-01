@@ -36,7 +36,7 @@ ___TEMPLATE_PARAMETERS___
   {
     "type": "SELECT",
     "name": "productType",
-    "displayName": "Product Type",
+    "displayName": "Content Type",
     "macrosInSelect": true,
     "selectItems": [
       {
@@ -72,6 +72,88 @@ ___TEMPLATE_PARAMETERS___
     "defaultValue": "product",
     "alwaysInSummary": true,
     "help": "It should be set to \u0027product\u0027 or \u0027product_group\u0027:\u003cul\u003e\u003cli\u003eUse \u0027product\u0027, if the keys you send represent products. Sent keys could be content_ids or contents.\u003c/li\u003e\u003cli\u003eUse \u0027product_group\u0027, if the keys you send in content_ids represent product groups. Product groups are used to distinguish products that are identical but have variations such as color, material, size or pattern.\u003c/li\u003e\u003c/ul\u003e"
+  },
+  {
+    "type": "CHECKBOX",
+    "name": "use_datalayer",
+    "checkboxText": "Use Data Layer (GA4 Items structure)",
+    "simpleValueType": true,
+    "alwaysInSummary": true,
+    "defaultValue": true,
+    "help": "You can use \u003ca href\u003d\"https://tagmanager.google.com/gallery/#/owners/matteo-zambon-gtm/templates/EEC-dataLayer-Builder-for-GA4\" target\u003d\"_blank\"\u003eEEC dataLayer Builder for GA4\u003c/a\u003e variable if you use Google Universal Analytics ecommerce object",
+    "subParams": [
+      {
+        "type": "SELECT",
+        "name": "alternative_items",
+        "displayName": "Read Data Items Object from Variable",
+        "macrosInSelect": true,
+        "selectItems": [],
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "use_datalayer",
+            "paramValue": true,
+            "type": "NOT_EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "SELECT",
+        "name": "alternative_value",
+        "displayName": "Read transaction value from Variable",
+        "macrosInSelect": true,
+        "selectItems": [],
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "use_datalayer",
+            "paramValue": true,
+            "type": "NOT_EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "SELECT",
+        "name": "alternative_transaction_id",
+        "displayName": "Read transaction id from Variable",
+        "macrosInSelect": true,
+        "selectItems": [],
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "use_datalayer",
+            "paramValue": true,
+            "type": "NOT_EQUALS"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "CHECKBOX",
+    "name": "use_default_events",
+    "checkboxText": "Use GA4 default events",
+    "simpleValueType": true,
+    "alwaysInSummary": true,
+    "defaultValue": true,
+    "help": "You can use \u003ca href\u003d\"https://tagmanager.google.com/gallery/#/owners/matteo-zambon-gtm/templates/EEC-dataLayer-Builder-for-GA4\" target\u003d\"_blank\"\u003eEEC dataLayer Builder for GA4\u003c/a\u003e variable if you use Google Universal Analytics ecommerce object",
+    "subParams": [
+      {
+        "type": "SELECT",
+        "name": "alternative_eventName",
+        "displayName": "Read Data from Variable",
+        "macrosInSelect": true,
+        "selectItems": [],
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "use_default_events",
+            "paramValue": true,
+            "type": "NOT_EQUALS"
+          }
+        ]
+      }
+    ]
   }
 ]
 
@@ -83,13 +165,31 @@ const makeInteger = require('makeInteger');
 const makeNumber = require('makeNumber');
 const ga4Events = ['view_item_list', 'select_item', 'view_item', 'remove_from_cart', 'add_to_cart', 'add_to_wishlist', 'view_promotion', 'select_promotion', 'view_cart', 'begin_checkout', 'add_shipping_info', 'add_payment_info', 'purchase', 'refund'];
 
-const event = dl('event');
-const ecommerce = dl('ecommerce', 1);
+var ecommerce_items = [];
+var ecommerce = [];
+var event = '';
+
+if(data.use_datalayer === false){  
+  ecommerce_items = data.alternative_items;
+  ecommerce = data.alternative_items;
+}
+else{
+  ecommerce_items = dl('ecommerce', 1).items;
+  ecommerce = dl('ecommerce', 1);
+}
+
+if(data.use_default_events === false){
+  event = data.alternative_eventName;
+}
+else{
+  event = dl('event');  
+}
+
 
 if(ga4Events.indexOf(event) >= 0){
   let fbObj = {};    
   let totalValue;
-  let prods = ecommerce.items;
+  let prods = ecommerce_items;
 
   let idList = prods.map(function(prod) {
     if(prod.hasOwnProperty('item_id')){
@@ -98,8 +198,15 @@ if(ga4Events.indexOf(event) >= 0){
   });
 
   if(event === 'purchase'){
-    totalValue = ecommerce.value;
-    fbObj.order_id = ecommerce.transaction_id;
+    if(data.use_datalayer === false){  
+      totalValue = data.alternative_value;
+      fbObj.order_id = data.alternative_transaction_id;
+    }
+    else
+    {
+      totalValue = ecommerce.value;
+      fbObj.order_id = ecommerce.transaction_id;
+    }
   }
   else{
     totalValue = prods.reduce(function(cur, acc) {
@@ -160,6 +267,13 @@ ___WEB_PERMISSIONS___
       },
       "param": [
         {
+          "key": "allowedKeys",
+          "value": {
+            "type": 1,
+            "string": "specific"
+          }
+        },
+        {
           "key": "keyPatterns",
           "value": {
             "type": 2,
@@ -193,5 +307,3 @@ scenarios: []
 ___NOTES___
 
 Created on 6/11/2021, 5:03:51 PM
-
-
