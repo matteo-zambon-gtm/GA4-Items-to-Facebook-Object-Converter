@@ -18,9 +18,11 @@ documentation: "https://github.com/matteo-zambon-gtm/GA4-Items-to-Facebook-Objec
 versions:
   
   # Latest Version
+  - sha: 9547f573dd7f92a151cea28dee85ccfc77223491
+    changeNotes: Fix missing fields
+  # Older versions
   - sha: 4c7a52e3f881d3551259e1c66b8a3e8da201683a
     changeNotes: Add custom variables for items object, transaction_id and transaction value
-  # Older versions
   - sha: da3f0422a92efd02943cf66dfad5f89a6910e200
     changeNotes: Change display name from Product Type to Content Type
   - sha: bdf3a769c4ce74ff33dc0acf2799737d4801ccd0
