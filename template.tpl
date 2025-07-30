@@ -203,7 +203,10 @@ var ecommerce_items = [];
 var ecommerce = [];
 var event = '';
 const customParametersTable = data.custom_parameters_table;
-const itemIdFormat = data.itemIdFormat;
+let itemIdFormat = data.itemIdFormat;
+if (!itemIdFormat) {
+  itemIdFormat = '[[item_id]]';
+}
 
 if(data.use_datalayer === false){  
   ecommerce_items = data.alternative_items;
